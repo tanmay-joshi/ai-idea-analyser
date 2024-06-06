@@ -30,7 +30,7 @@ crew = Crew(
   process=Process.sequential,  # Optional: Sequential task execution is default
   memory=True,
   cache=True,
-  max_rpm=100,
+  # max_rpm=100,
   share_crew=True
 )
 
