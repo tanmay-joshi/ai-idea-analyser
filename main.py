@@ -5,36 +5,34 @@ dotenv.load_dotenv()
 import agentops
 agentops.init(os.environ['AGENTOPS_API_KEY'])
 
-from small_agents import idea_analyst, idea_researcher
-from small_tasks import research_idea_task, analyse_idea_task
-
+from small_agents import idea_analyst as IdeaAnalyst, idea_researcher as IdeaResearcher
+from small_tasks import research_idea_task as ResearchIdeaTask, analyse_idea_task as AnalyseIdeaTask
 from tools import search_tool
-
 from crewai import Crew, Process
 
-print("Hello, World!")
-print("welcome to crewai-2")
-print("-------------------")
-idea= input("Enter the idea you want to research and analyse: ")
+def research_and_analyse_idea(idea):
+    idea_analyst = IdeaAnalyst(idea)
+    idea_researcher = IdeaResearcher(idea)
 
-idea_analyst = idea_analyst(idea)
-idea_researcher = idea_researcher(idea)
+    research_idea_task = ResearchIdeaTask(idea, tools=[search_tool], agent=idea_researcher)
+    analyse_idea_task = AnalyseIdeaTask(idea, tools=[search_tool], agent=idea_analyst, context=[research_idea_task])
 
-research_idea_task = research_idea_task(idea, tools=[search_tool], agent=idea_researcher)
-analyse_idea_task = analyse_idea_task(idea, tools=[search_tool], agent=idea_analyst,context=[research_idea_task])
+    # Forming the tech-focused crew with some enhanced configurations
+    crew = Crew(
+        agents=[idea_researcher, idea_analyst],
+        tasks=[research_idea_task, analyse_idea_task],
+        process=Process.sequential,  # Optional: Sequential task execution is default
+        memory=True,
+        cache=True,
+        # max_rpm=100,
+        share_crew=True
+    )
 
-# Forming the tech-focused crew with some enhanced configurations
-crew = Crew(
-  agents=[idea_researcher, idea_analyst],
-  tasks=[research_idea_task, analyse_idea_task],
-  process=Process.sequential,  # Optional: Sequential task execution is default
-  memory=True,
-  cache=True,
-  # max_rpm=100,
-  share_crew=True
-)
+    # Starting the task execution process with enhanced feedback
+    result = crew.kickoff(inputs={'idea': idea})
+    return result
 
-#  inputs = { 'idea': 'D2C brand of Fox Nut as a healthy snack' }
-# Starting the task execution process with enhanced feedback
-result = crew.kickoff(inputs={'idea': idea})
-print(result)
+# Example usage
+# idea = "D2C brand of Fox Nut as a healthy snack"
+# result = research_and_analyse_idea(idea)
+# print(result)
