@@ -5,8 +5,8 @@ dotenv.load_dotenv()
 import agentops
 agentops.init(os.environ['AGENTOPS_API_KEY'])
 
-from big_agents import idea_analyst, idea_researcher
-from big_tasks import research_idea_task, analyse_idea_task
+from small_agents import idea_analyst, idea_researcher
+from small_tasks import research_idea_task, analyse_idea_task
 
 from tools import search_tool
 
@@ -21,7 +21,7 @@ idea_analyst = idea_analyst(idea)
 idea_researcher = idea_researcher(idea)
 
 research_idea_task = research_idea_task(idea, tools=[search_tool], agent=idea_researcher)
-analyse_idea_task = analyse_idea_task(idea, tools=[search_tool], agent=idea_analyst)
+analyse_idea_task = analyse_idea_task(idea, tools=[search_tool], agent=idea_analyst,context=[research_idea_task])
 
 # Forming the tech-focused crew with some enhanced configurations
 crew = Crew(
