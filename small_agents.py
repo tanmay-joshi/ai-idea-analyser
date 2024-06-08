@@ -4,6 +4,10 @@ from tools import search_tool
 
 from crewai import Agent
 
+# def step_callback(step_output):
+#   print(f"""Step {step_output} completed""")
+#   print(step_output)
+
 # Creating a senior researcher agent with memory and verbose mode
 def idea_researcher(idea: str):
   return Agent(
@@ -13,7 +17,8 @@ def idea_researcher(idea: str):
   verbose=True,
   memory=True,
   tools=[search_tool],
-  allow_delegation=True
+  allow_delegation=True,
+  # step_callback= step_callback
 )
 
 # Creating an Idea analyst agent with custom tools and delegation capability
@@ -25,5 +30,7 @@ def idea_analyst(idea: str):
   verbose=True,
   memory=True,
   tools=[search_tool],
-  allow_delegation=False
+  allow_delegation=False,
+  # step_callback= step_callback
 )
+
